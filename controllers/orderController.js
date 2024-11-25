@@ -1,11 +1,5 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js"
-import Stripe from "stripe";
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-import dotenv from 'dotenv';
-dotenv.config();
-
 
 //config variables
 const currency = "inr";
@@ -46,16 +40,6 @@ const placeOrder = async (req, res) => {
             },
             quantity: 1
         })
-
-        const session = await stripe.checkout.sessions.create({
-            success_url: `${process.env.frontend_URL}/verify?success=true&orderId=${newOrder._id}`,
-            cancel_url: `${process.env.frontend_URL}/verify?success=false&orderId=${newOrder._id}`,
-            line_items: line_items,
-            mode: 'payment',
-        });
-
-        res.json({ success: true, session_url: session.url });
-
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: "Error" })
